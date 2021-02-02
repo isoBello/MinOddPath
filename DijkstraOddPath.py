@@ -1,44 +1,36 @@
 #!/MinOddPath/venv/bin python3.6
 # -*- coding: utf-8 -*-
-import sys
 from collections import defaultdict
 import heapq
 
 
 def create_graph():
-    vertices = []
-
     edges = defaultdict(list)
     weights = {}
 
-    try:
-        with open(sys.argv[1]) as file:
-            for v in range(0, int(file.readline()[0])):
-                v = v + 1
-                vertices.append(v)
+    num_vertices, num_edges = (map(int, input().split(" ")))
+    vertices = [x for x in range(1, num_vertices+1)]
 
-            for line in file.readlines()[0:]:
-                try:
-                    values = line.split(" ")
-                    u = int(values[0])
-                    v = int(values[1])
-                    w = int(values[2])
+    while True:
+        try:
+            u, v, w = (map(int, input().split(" ")))
+            add_edge(u, v, w, edges, weights)
+        except EOFError:
+            break
 
-                    edges[even(u)].append(odd(v))
-                    edges[odd(u)].append(even(v))
-                    edges[odd(v)].append(even(u))
-                    edges[even(v)].append(odd(u))
+    return vertices, edges, weights
 
-                    weights[(even(u), odd(v))] = w
-                    weights[(odd(u), even(v))] = w
-                    weights[(even(v), odd(u))] = w
-                    weights[(odd(v), even(u))] = w
-                except ValueError:
-                    continue
-    except FileNotFoundError:
-        print("File not found, please try another filename.")
 
-    Dijkstra(vertices, edges, weights)
+def add_edge(u, v, w, edges, weights):
+    edges[even(u)].append(odd(v))
+    edges[odd(u)].append(even(v))
+    edges[odd(v)].append(even(u))
+    edges[even(v)].append(odd(u))
+
+    weights[(even(u), odd(v))] = w
+    weights[(odd(u), even(v))] = w
+    weights[(even(v), odd(u))] = w
+    weights[(odd(v), even(u))] = w
 
 
 def Dijkstra(lvertices, ledges, lweights):
@@ -79,4 +71,5 @@ def size(a):
 
 
 if __name__ == "__main__":
-    create_graph()
+    vertices, edges, weights = create_graph()
+    Dijkstra(vertices, edges, weights)
